@@ -16,7 +16,9 @@ include('connect.php');
 </head>
 
 <body>
-    <!-- ************************** -->
+    <!-- *************************** -->
+    <?php include 'header.php'; ?>
+    <!-- **********start form of adding product********************************** -->
     <?php
     if (isset($_POST['add_product'])) {
         $p_name = $_POST['p_name'];
@@ -29,55 +31,10 @@ include('connect.php');
             move_uploaded_file($p_image_tmp_name, $p_image_folder);
             $message[] = 'product is added succesfully';
         } else {
-            $message[] = 'could not add the product';
+            $message[] = 'THE product is not added, please try again';
         }
     }
     ?>
-    <!-- ************************ -->
-    <?php
-    if (isset($message)) {
-        foreach ($message as $message) {
-            echo '<div class="message"><span>' . $message . '</span> <i class="fas fa-times" onclick="this.parentElement.style.display = `none`;"></i> </div>';
-        };
-    };
-    ?>
-    <!-- ************************** -->
-    <?php
-    if (isset($_GET['delete'])) {
-        $delete_id = $_GET['delete'];
-        $delete_query = $conn->query("DELETE FROM `products` WHERE id = $delete_id ");
-        if ($delete_query) {
-            header('location:admin.php');
-            $message[] = 'product has been deleted';
-        } else {
-            header('location:admin.php');
-            $message[] = 'product could not be deleted';
-        };
-    };
-    ?>
-    <!-- *************************** -->
-    <?php
-    if (isset($_POST['update_product'])) {
-        $update_p_id = $_POST['update_p_id'];
-        $update_p_name = $_POST['update_p_name'];
-        $update_p_price = $_POST['update_p_price'];
-        $update_p_image = $_FILES['update_p_image']['name'];
-        $update_p_image_tmp_name = $_FILES['update_p_image']['tmp_name'];
-        $update_p_image_folder = 'uploaded_img/' . $update_p_image;
-        $update_query = $conn->query("UPDATE `products` SET name = '$update_p_name', price = '$update_p_price', image = '$update_p_image' WHERE id = '$update_p_id'");
-        if ($update_query) {
-            move_uploaded_file($update_p_image_tmp_name, $update_p_image_folder);
-            $message[] = 'product is updated succesfully';
-            header('location:admin.php');
-        } else {
-            $message[] = 'could not update the product';
-            header('location:admin.php');
-        }
-    }
-    ?>
-    <!-- *************************** -->
-    <?php include 'header.php'; ?>
-    <!-- ************************** -->
     <div class="container">
         <section>
             <form action="" method="post" class="add-product-form" enctype="multipart/form-data">
@@ -88,6 +45,21 @@ include('connect.php');
                 <input type="submit" value="add the product" name="add_product" class="btn">
             </form>
         </section>
+        <!-- *************end form of adding product************* -->
+        <!-- *************start display product table************* -->
+        <?php
+    if (isset($_GET['delete'])) {
+        $delete_id = $_GET['delete'];
+        $delete_query = $conn->query("DELETE FROM `products` WHERE id = $delete_id ");
+        if ($delete_query) {
+            header('location:admin.php');
+            $message[] = 'product has been deleted';
+        } else {
+            header('location:admin.php');
+            $message[] = 'product could not be deleted, please try again';
+        };
+    };
+    ?>
         <section class="display-product-table">
             <table>
                 <thead>
@@ -119,6 +91,27 @@ include('connect.php');
                 </tbody>
             </table>
         </section>
+        <!-- *************end display product table************* -->
+        <!-- *************start form of updating product************* -->
+        <?php
+    if (isset($_POST['update_product'])) {
+        $update_p_id = $_POST['update_p_id'];
+        $update_p_name = $_POST['update_p_name'];
+        $update_p_price = $_POST['update_p_price'];
+        $update_p_image = $_FILES['update_p_image']['name'];
+        $update_p_image_tmp_name = $_FILES['update_p_image']['tmp_name'];
+        $update_p_image_folder = 'uploaded_img/' . $update_p_image;
+        $update_query = $conn->query("UPDATE `products` SET name = '$update_p_name', price = '$update_p_price', image = '$update_p_image' WHERE id = '$update_p_id'");
+        if ($update_query) {
+            move_uploaded_file($update_p_image_tmp_name, $update_p_image_folder);
+            $message[] = 'THE product is updated succesfully';
+            header('location:admin.php');
+        } else {
+            $message[] = 'could not update the product';
+            header('location:admin.php');
+        }
+    }
+    ?>
         <section class="edit-form-container">
             <?php
             if (isset($_GET['edit'])) {
@@ -126,6 +119,7 @@ include('connect.php');
                 $edit_query = $conn->query("SELECT * FROM `products` WHERE id = $edit_id");
                 if ($edit_query->rowCount() > 0) {
                     $fetch_edit = $edit_query->fetch(PDO::FETCH_ASSOC);
+                    // print_r($fetch_edit);
             ?>
                     <form action="" method="post" enctype="multipart/form-data">
                         <img src="uploaded_img/<?= $fetch_edit['image']; ?>" height="200" alt="">
@@ -142,7 +136,16 @@ include('connect.php');
             }
             ?>
         </section>
+        <!-- *************end form of updating product************* -->
     </div>
+    <!-- ************************** -->
+    <?php
+    if (isset($message)) {
+        foreach ($message as $message) {
+            echo '<div class="message"><span>' . $message . '</span> <i class="fas fa-times" onclick="this.parentElement.style.display = `none`;"></i> </div>';
+        };
+    };
+    ?>
     <!-- ************************** -->
     <!-- custom js file link  -->
     <script src="js/script.js"></script>

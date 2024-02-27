@@ -3,7 +3,6 @@
 ?>
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -17,41 +16,46 @@
 <body>
     <!-- ******************** -->
     <?php include 'header.php'; ?>
-    <!-- ******************** -->
+    <!-- ***********start update the quantity in cart********* -->
     <?php
     if (isset($_POST['update_update_btn'])) {
+        $update_id = $_POST['update_quantity_id'];//hidden input
         $update_value = $_POST['update_quantity'];
-        $update_id = $_POST['update_quantity_id'];
         $update_quantity_query = $conn->query("UPDATE `cart` SET quantity = '$update_value' WHERE id = '$update_id'");
         if ($update_quantity_query) {
             header('location:cart.php');
-        } else {
+        }
+        else {
             $message[] = 'please try again!';
         }
     };
     ?>
-    <!-- ******************** -->
+    <!-- *********END update the quantity in cart*********** -->
+    <!-- ********start remove item from cart************ -->
     <?php
     if (isset($_GET['remove'])) {
         $remove_id = $_GET['remove'];
         $remove_query = $conn->query("DELETE FROM `cart` WHERE id = '$remove_id'");
-        if ($remove_query) {
+        if ($remove_query->rowCount() > 0) {
             header('location:cart.php');
         }
     }
     ?>
-    <!-- ******************** -->
+    <!-- ******* END remove item from cart************* -->
+    <!-- ********start delete all item from cart************ -->
     <?php
     if (isset($_GET['delete_all'])) {
         $delete_all_query = $conn->query("DELETE FROM `cart`");
         if ($delete_all_query->rowCount() > 0) {
             header('location:cart.php');
-        } else {
+        }
+        else {
             $message[] = 'There are no items to delete.';
         }
     }
 ?>
-    <!-- ******************** -->
+    <!-- ******* END delete all item from cart************* -->
+    <!-- *********start shopping cart******************** -->
     <div class="container">
         <section class="shopping-cart">
             <h1 class="heading">shopping cart</h1>
@@ -77,22 +81,22 @@
                                 <td>
                                     <form action="" method="post">
                                         <input type="hidden" name="update_quantity_id" value="<?= $fetch_cart['id']; ?>">
-                                        <input type="number" name="update_quantity" min="1" value="<?php echo $fetch_cart['quantity']; ?>">
+                                        <input type="number" name="update_quantity" min="1" value="<?= $fetch_cart['quantity']; ?>">
                                         <input type="submit" value="update" name="update_update_btn">
                                     </form>
                                 </td>
-                                <td>$<?php echo $sub_total = number_format($fetch_cart['price'] * $fetch_cart['quantity']); ?>/-</td>
-                                <td><a href="cart.php?remove=<?php echo $fetch_cart['id']; ?>" onclick="return confirm('remove item from cart?')" class="delete-btn"> <i class="fas fa-trash"></i> remove</a></td>
+                                <td>$<?= $sub_total = number_format($fetch_cart['price'] * $fetch_cart['quantity']); ?>/-</td>
+                                <td><a href="cart.php?remove=<?= $fetch_cart['id']; ?>" onclick="return confirm('remove item from cart?')" class="delete-btn"> <i class="fas fa-trash"></i> remove</a></td>
                             </tr>
                     <?php
                             $grand_total += $sub_total;
                         };
                     };
                     ?>
-                    <tr class="table-bottom">
+                        <tr class="table-bottom">
                         <td><a href="products.php" class="option-btn" style="margin-top: 0;">continue shopping</a></td>
                         <td colspan="3">grand total</td>
-                        <td>$<?php echo $grand_total; ?>/-</td>
+                        <td>$<?= $grand_total; ?>/-</td>
                         <td><a href="cart.php?delete_all" onclick="return confirm('are you sure you want to delete all?');" class="delete-btn"> <i class="fas fa-trash"></i> delete all </a></td>
                     </tr>
                 </tbody>
@@ -102,8 +106,7 @@
             </div>
         </section>
     </div>
-    <!-- ******************** -->
-    <!-- ******************** -->
+    <!-- ********end shopping cart************ -->
     <!-- custom js file link  -->
     <script src="js/script.js"></script>
 </body>

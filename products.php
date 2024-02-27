@@ -1,4 +1,3 @@
-<!-- connect.php -->
 <?php
 include('connect.php');
 ?>
@@ -24,20 +23,22 @@ include('connect.php');
         $product_price = htmlspecialchars($_POST['product_price']);
         $product_image = htmlspecialchars($_POST['product_image']);
         $product_quantity = 1;
-        $select_cart = $conn->prepare("SELECT * FROM `cart` WHERE name = :product_name");
-        $select_cart->execute(array(':product_name' => $product_name));
+        // $select_cart = $conn->prepare("SELECT * FROM `cart` WHERE name = :product_name");
+        // $select_cart->execute(array(':product_name' => $product_name));
         // Check the result using rowCount() method
+        $select_cart = $conn->query("SELECT * FROM `cart` WHERE name = '$product_name'");
         if ($select_cart->rowCount() > 0) {
-            $message[] = 'product already added to cart';
-        } else {
-            // Prepare and execute the INSERT query using PDO
-            $insert_product = $conn->prepare("INSERT INTO `cart` (name, price, image, quantity) VALUES (:product_name, :product_price, :product_image, :product_quantity)");
-            $insert_product->execute(array(
-                ':product_name' => $product_name,
-                ':product_price' => $product_price,
-                ':product_image' => $product_image,
-                ':product_quantity' => $product_quantity
-            ));
+            $message[] = 'product already added to cart earlier ! and we increased the quantity by 1';
+        }
+        else {
+            // $insert_product = $conn->prepare("INSERT INTO `cart` (name, price, image, quantity) VALUES (:product_name, :product_price, :product_image, :product_quantity)");
+            // $insert_product->execute(array(
+            //     ':product_name' => $product_name,
+            //     ':product_price' => $product_price,
+            //     ':product_image' => $product_image,
+            //     ':product_quantity' => $product_quantity
+            // ));
+            $insert_product = $conn->query("INSERT INTO `cart` (name, price, image, quantity) VALUES ('$product_name', '$product_price', '$product_image', '$product_quantity')");
             $message[] = 'product added to cart successfully';
         }
     }
